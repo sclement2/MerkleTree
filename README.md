@@ -12,10 +12,14 @@ For Blockchain, storing transactions as Merkle Trees allows us to look at a bloc
 ## Merkle Trees In Bitcoin
 The design of merkle trees makes them extremely efficient for data verification. In Bitcoin, Merkle trees are used to store every transaction mined on the Bitcoin network in an efficient way:
 
+<img src="./images/Bitcoin-block-structure.png" alt="Bitcoin block structure" width="400" />
+
 ## Merkle Proofs
 The benefit of the Merkle tree design -- a recursive hashing-based algorithm -- is that it allows for efficient proof that some data exists within the root hash construction (actually contained in the block!); in other words, it allows for Merkle proofs. A Merkle proof confirms specific transactions represented by a leaf or branch hash within a Merkle hash root.
 
 So if anyone ever needs to prove that a transaction existed at one point in time in the blockchain, they just need to provide a Merkle proof.
+
+![alt text](https://ethereum.org/static/d971703e4ef95e42df0d02a9ec51ec0b/ba4d9/proof-c.png)
 
 
 In the diagram above, say you want to prove that C (some random tx) exists in this block. Thanks to Merkle proofs, you only need 3 total pieces of data:
@@ -41,3 +45,17 @@ When verifying data using a Merkle tree, there is a **Prover** and a **Verifier*
 - A Verifier: Does not need to know all the values to know *for certain* one value is in the tree
 
 Merkle trees are a huge benefit to the **Verifier**. You either produce a proof successfully, meaning data verification passes, or you don't, meaning your piece of data was not present when the Merkle root hash was calculated (or you performed the calculation wrong!).
+
+## Merkle Tree Vocabulary Summary
+
+Final terminology for Merkle trees:
+
+- **Merkle tree**: a structure used in computer science to validate data
+- **Merkle root**: the hash contained in the block header, which is derived from the hashes of all other transactions in the block
+- **Merkle path**: represents the information which the user needs to calculate the expected value for the Merkle root for a block, from their own transaction hash contained in that block. The Merkle path is used as part of of the Merkle proof
+- **Merkle proof**: proves the existence of a specific transaction in a specific block (without the user needing to examine all the transactions in the block). It includes the Merkle root and the Merkle path
+
+## Conclusion
+
+Merkle trees are a very popular data structure in blockchains. It's important to understand the low-level of blockchain storage and the implications of such decisions. Keeping data storage lean and efficient is the reason behind using structures like Merkle trees - this understanding is essential as you start building out dApps, you always want to be lean and efficient with your data storage. Why? Because on Ethereum, the less efficient your use of data storage, the more expensive your program will be for you and your users.
+
