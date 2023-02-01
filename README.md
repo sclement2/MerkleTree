@@ -5,11 +5,46 @@
 [Checkout Alchemy University](https://university.alchemy.com)
 
 ## Merkle Trees in Blockchains
-Merkle Trees are awesome! They allow us to verify if a piece of data is part of a larger data structure, without having all of the data within that structure. This means they can be used to check for inconsistencies in all kinds of distributed systems!
+Merkle Trees are awesome! They allow us to verify if a piece of data is part of a larger data structure, **without having all of the data within that structure**. This means they can be used to check for inconsistencies in all kinds of distributed systems!
 
 For Blockchain, storing transactions as Merkle Trees allows us to look at a block and verify that a transaction was part of it by only having part of the data set!
 
-## Merkle Trees In Bitcoin
+> Remember that the data within a blockchain block is just a set of transactions.
+
+Let's take a look at an example:
+
+## ABCDEFGHIJ Merkle Tree
+
+In this tree each letter represents a hash, and combined letters represent concatenating hashes and hashing those together.
+```AsciiDoc
+          Root 
+        /      \
+    ABCD        EFGHIJ
+     |          /    \
+    ABCD     EFGH     IJ
+    / \      /   \     |
+   AB  CD   EF   GH   IJ
+  / \  / \  / \  / \  / \      
+  A B  C D  E F  G H  I J 
+```
+
+To prove that the hash `A` is a part of the Merkle Root we don't need to know hash `C` or `D`, we just need to know hash `CD`. The necessary proof for `A` is:
+```AsciiDoc
+ Hash(Hash(Hash(A + B) + CD) + EFGHIJ)
+```
+Where we only need to know the hashes `B`, `CD`, and `EFGHIJ` to prove that `A` is in the merkle root.
+
+The items in this repository deal with the following use cases:
+- Combining two leaves
+- Larger Merkle Trees with multiple layers
+- Merkle Trees with odd number of leaves
+- Building proof that a particular leaf node exists with the Merkle Tree
+- Verify a proof
+
+
+## Additional Information Surrounding Merkle Trees
+
+### Merkle Trees In Bitcoin
 The design of merkle trees makes them extremely efficient for data verification. In Bitcoin, Merkle trees are used to store every transaction mined on the Bitcoin network in an efficient way:
 
 <img src="./images/Bitcoin-block-structure.png" alt="Bitcoin block structure" width="400" />
@@ -26,7 +61,7 @@ Thanks to Merkle trees, storage on the blockchain is efficient - you must only c
 
 Thanks to Merkle trees, there is an efficient way to verify that some data exists in a root hash. Much better to store just ONE root hash representing all the transactions per block!
 
-## Merkle Proofs
+### Merkle Proofs
 The benefit of the Merkle tree design -- a recursive hashing-based algorithm -- is that it allows for efficient proof that some data exists within the root hash construction (actually contained in the block!); in other words, it allows for Merkle proofs. A Merkle proof confirms specific transactions represented by a leaf or branch hash within a Merkle hash root.
 
 So if anyone ever needs to prove that a transaction existed at one point in time in the blockchain, they just need to provide a Merkle proof.
@@ -37,12 +72,11 @@ So if anyone ever needs to prove that a transaction existed at one point in time
 
 In the diagram above, say you want to prove that C (some random tx) exists in this block. Thanks to Merkle proofs, you only need 3 total pieces of data:
 
-```AsciiDoc
-D, H(A-B), H(E-H) to construct the tree root hash: H(A-H). 
-```
+`D`, `H(A-B)`, `H(E-H)` to construct the tree root hash: `H(A-H)`. 
+
 That might not seem like much with such a small tree, but what about a tree containing over 10,000 transactions? If one is able to successfully construct the root hash, then that is proof enough that their transaction was indeed part of that Merkle tree at that time. Data verification FTW!
 
-## Merkle Trees Use Cases
+### Merkle Trees Use Cases
 Merkle trees are:
 - space and computationally efficient
 - good for scalability and decentralization
@@ -59,7 +93,7 @@ When verifying data using a Merkle tree, there is a **Prover** and a **Verifier*
 
 Merkle trees are a huge benefit to the **Verifier**. You either produce a proof successfully, meaning data verification passes, or you don't, meaning your piece of data was not present when the Merkle root hash was calculated (or you performed the calculation wrong!).
 
-## Merkle Tree Vocabulary Summary
+### Merkle Tree Vocabulary Summary
 
 Final terminology for Merkle trees:
 
@@ -68,7 +102,7 @@ Final terminology for Merkle trees:
 - **Merkle path**: represents the information which the user needs to calculate the expected value for the Merkle root for a block, from their own transaction hash contained in that block. The Merkle path is used as part of of the Merkle proof
 - **Merkle proof**: proves the existence of a specific transaction in a specific block (without the user needing to examine all the transactions in the block). It includes the Merkle root and the Merkle path
 
-## Conclusion
+### Conclusion
 
 Merkle trees are a very popular data structure in blockchains. It's important to understand the low-level of blockchain storage and the implications of such decisions. Keeping data storage lean and efficient is the reason behind using structures like Merkle trees - this understanding is essential as you start building out dApps, you always want to be lean and efficient with your data storage. Why? Because on Ethereum, the less efficient your use of data storage, the more expensive your program will be for you and your users.
 
